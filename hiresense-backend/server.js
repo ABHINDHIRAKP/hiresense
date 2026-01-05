@@ -3,9 +3,7 @@ const app = express();
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("API running");
-});
+app.use("/api/users", require('./routes/userRoutes'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
