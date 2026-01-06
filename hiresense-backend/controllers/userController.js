@@ -1,5 +1,6 @@
 const express = require('express');
 const User = require('../models/userModel');
+const bcrypt = require('bcrypt');
 
 // @POST /api/users/register
 const registerUser = async (req, res) => {
@@ -18,7 +19,8 @@ const registerUser = async (req, res) => {
     let user = await User.findOne({ email });
     if (!user) {
         // if not add the user
-        user = await User.create({ name, email, password, roles });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user = await User.create({ name, email, password: hashedPassword, roles });
         return res.status(201).json({
         message: "User registered successfully",
         user: {
@@ -54,6 +56,12 @@ const registerUser = async (req, res) => {
 
 // @POST /api/users/login
 const loginUser = async (req, res) => {
+    const { email, password, role } = req.body;
+    // validate request
+    if (!email || !password || !role) {
+        return res.status(400).json({ message: "Please provide all details"});
+    }
+
 
 }
 
