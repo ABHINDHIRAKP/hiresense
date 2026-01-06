@@ -58,8 +58,25 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     const { email, password, role } = req.body;
     // validate request
-    if (!email || !password || !role) {
+    if (!email || !password) {
         return res.status(400).json({ message: "Please provide all details"});
+    }
+    // check if user exists
+    const user = await User.findOne({email});
+    if (user && await bcrypt.compare(password, user.password)) {
+        // check if user has the requested role
+        return res.status(200).json({
+            message: "Login successful",
+            user: {
+                name: user.name,
+                email: user.email,
+                roles: role
+            }
+        })
+        
+    }
+    else {
+        return res.status(401).json({ message: "Invalid credentials"});
     }
 
 
