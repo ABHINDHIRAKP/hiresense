@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/userModel');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 // @POST /api/users/register
 const registerUser = async (req, res) => {
@@ -56,7 +57,7 @@ const registerUser = async (req, res) => {
 
 // @POST /api/users/login
 const loginUser = async (req, res) => {
-    const { email, password, role } = req.body;
+    const { email, password } = req.body;
     // validate request
     if (!email || !password) {
         return res.status(400).json({ message: "Please provide all details"});
@@ -64,14 +65,23 @@ const loginUser = async (req, res) => {
     // check if user exists
     const user = await User.findOne({email});
     if (user && await bcrypt.compare(password, user.password)) {
-        // check if user has the requested role
+        
+        const accessToken = jwt.sign(
+            {
+                id: user._id,
+                roles: user.roles
+            },
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: '2m'}
+        )
         return res.status(200).json({
             message: "Login successful",
             user: {
                 name: user.name,
                 email: user.email,
                 roles: role
-            }
+            },
+            accessToken
         })
         
     }
