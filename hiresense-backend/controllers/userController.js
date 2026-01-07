@@ -72,14 +72,14 @@ const loginUser = async (req, res) => {
                 roles: user.roles
             },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '2m'}
+            { expiresIn: '10m'}
         )
         return res.status(200).json({
             message: "Login successful",
             user: {
                 name: user.name,
                 email: user.email,
-                roles: role
+                roles: user.roles
             },
             accessToken
         })
