@@ -12,3 +12,7 @@ Thumbs.db
 # Logs
 logs/
 *.log
+
+# Uploaded resumes
+uploads/
+
